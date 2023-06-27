@@ -51,7 +51,7 @@
   + [通过 HTTP PUT 从本地文件系统或流式数据源导入](/loading/StreamLoad.md)
   + [从 HDFS 或外部云存储系统导入](/loading/BrokerLoad.md)
   + [从 Apache Kafka® 持续导入](/loading/RoutineLoad.md)
-  + 使用 Apache Spark™ 导入
+  + 通过 Apache Spark™ 导入
     + [使用 Spark connector（推荐）](/loading/Spark-connector-starrocks.md)
     + [使用 Spark Load](/loading/SparkLoad.md)
   + [使用 INSERT 语句导入](/loading/InsertInto.md)
@@ -64,8 +64,8 @@
   + [使用 CloudCanal 导入](/loading/CloudCanal_loading.md)
 + 导出数据
   + [使用 EXPORT 导出数据](/unloading/Export.md)
-  + [使用 Spark 连接器读取数据](/unloading/Spark_connector.md)
-  + [使用 Flink 连接器读取数据](/unloading/Flink_connector.md)
+  + [使用 Spark Connector 读取数据](/unloading/Spark_connector.md)
+  + [使用 Flink Connector 读取数据](/unloading/Flink_connector.md)
 + 查询数据源
   + Catalog
     + [概述](/data_source/catalog/catalog_overview.md)
@@ -114,7 +114,6 @@
     + [监控报警](/administration/Monitor_and_Alert.md)
     + [通过 Audit Loader 管理 StarRocks 中的审计日志](/administration/audit_loader.md)
     + [启用 FQDN 访问](/administration/enable_fqdn.md)
-    + [升级 DorisDB 到 StarRocks](/administration/update_from_dorisdb.md)
     + [升级 Apache Doris 到 StarRocks](/administration/update_from_doris.md)
     + [时区](/administration/timezone.md)
     + [Information Schema](/administration/information_schema.md)
