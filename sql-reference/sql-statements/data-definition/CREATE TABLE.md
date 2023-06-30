@@ -438,8 +438,8 @@ PARTITION BY RANGE (pay_dt) (
   **使用限制**
 
   * 不支持主键模型的表、更新模型的表和聚合表。
-  * 不支持归属 [Colocation Group](../using_starrocks/Colocate_join.md)。
-  * 不支持 [Spark Load](../loading/SparkLoad.md)。
+  * 不支持归属 [Colocation Group](../../../using_starrocks/Colocate_join.md)。
+  * 不支持 [Spark Load](../../../loading/SparkLoad.md)。
 
   更多随机分桶的信息，请参见[随机分桶](../../../table_design/Data_distribution.md#随机分桶自-31)。
 
