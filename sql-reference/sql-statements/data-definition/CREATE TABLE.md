@@ -402,6 +402,7 @@ PARTITION BY RANGE (pay_dt) (
 支持哈希分桶和随机分桶。
 
 * 哈希分桶
+ 
   语法：
 
   ```SQL
@@ -426,22 +427,21 @@ PARTITION BY RANGE (pay_dt) (
 
 * 随机分桶
 
-对每个分区的数据，StarRocks 将数据随机地分布在所有分桶中，而不受到特定列值的影响。并且如果选择由系统设置分桶数量，则您无需设置分桶信息。
-如果选择手动指定分桶数量，则语法如下：
+  对每个分区的数据，StarRocks 将数据随机地分布在所有分桶中，而不受到特定列值的影响。并且如果选择由系统设置分桶数量，则您无需设置分桶信息。如果选择手动指定分桶数量，则语法如下：
 
-```SQL
-DISTRIBUTED BY RANDOM BUCKETS <num>;
-```
+  ```SQL
+  DISTRIBUTED BY RANDOM BUCKETS <num>;
+  ```
+  
+  不过值得注意的是，随机分桶可能不适用于基于特定列值进行查询和聚合操作的情况。在这些情况下，哈希分桶可能更为合适，因为它可以将相似的数据存储在同一个桶中，方便数据的访问和处理。
 
-不过值得注意的是，随机分桶可能不适用于基于特定列值进行查询和聚合操作的情况。在这些情况下，哈希分桶可能更为合适，因为它可以将相似的数据存储在同一个桶中，方便数据的访问和处理。
+  **使用限制**
 
-**使用限制**
+  * 不支持主键模型的表、更新模型的表和聚合表。
+  * 不支持归属 [Colocation Group](../using_starrocks/Colocate_join.md)。
+  * 不支持 [Spark Load](../loading/SparkLoad.md)。
 
-* 不支持主键模型的表、更新模型的表和聚合表。
-* 不支持归属 [Colocation Group](../using_starrocks/Colocate_join.md)。
-* 不支持 [Spark Load](../loading/SparkLoad.md)。
-
-更多随机分桶的信息，请参见[随机分桶](../../../table_design/Data_distribution.md#随机分桶自-31)。
+  更多随机分桶的信息，请参见[随机分桶](../../../table_design/Data_distribution.md#随机分桶自-31)。
 
 ### **ORDER BY**
 
