@@ -402,7 +402,7 @@ PARTITION BY RANGE (pay_dt) (
 支持哈希分桶和随机分桶。
 
 * 哈希分桶
- 
+
   语法：
 
   ```SQL
@@ -430,7 +430,7 @@ PARTITION BY RANGE (pay_dt) (
   对每个分区的数据，StarRocks 将数据随机地分布在所有分桶中，而不受到特定列值的影响。并且如果选择由系统设置分桶数量，则您无需设置分桶信息。如果选择手动指定分桶数量，则语法如下：
 
   ```SQL
-  DISTRIBUTED BY RANDOM BUCKETS <num>;
+  DISTRIBUTED BY RANDOM BUCKETS <num>
   ```
   
   不过值得注意的是，随机分桶可能不适用于基于特定列值进行查询和聚合操作的情况。在这些情况下，哈希分桶可能更为合适，因为它可以将相似的数据存储在同一个桶中，方便数据的访问和处理。
