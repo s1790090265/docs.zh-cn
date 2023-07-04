@@ -334,7 +334,7 @@ HASH_JOIN_NODE (id=2):(Active: 996.337ms, % non-child: 52.05%)
 
 ## Query Hint
 
- StarRocks 支持提示（Hint）功能。Hint 是一种指令或注释，显式地向查询优化器建议如何执行查询。Hint 仅在单个查询范围内生效。
+ StarRocks 支持提示（Hint）功能。Hint 是一种指令或注释，显式地向查询优化器建议如何执行查询。目前支持两种 Hint：系统变量 Hint 和 Join Hint。Hint 仅在单个查询范围内生效。
 
 ### 系统变量 Hint
 
@@ -377,7 +377,7 @@ CREATE MATERIALIZED VIEW mv
 
 针对多表关联查询，优化器一般会主动选择最优的 Join 执行方式。在特殊情况下，您也可以使用 Join Hint 显式地向优化器建议 Join 执行方式、以及禁用 Join Reorder。目前 Join Hint 支持的 Join 执行方式有 Shuffle Join、Broadcast Join、Bucket Shuffle Join 和 Colocate Join。
 
-当使用 Join Hint 时，优化器不会进行 Join Reorder，因此您需要确保右表为较小的表。并且当您建议 Join 执行方式为 [Colocate Join](../../xxx) 或者 Bucket Shuffle Join 时，您需要确保表的数据分布情况满足这两种 Join 执行方式的要求，否则所建议的 Join 执行方式不生效。
+当您使用 Join Hint 建议 Join 的执行方式后，优化器不会进行 Join Reorder，因此您需要确保右表为较小的表。并且当您所建议的 Join 执行方式为 [Colocate Join](../../xxx) 或者 Bucket Shuffle Join 时，您需要确保表的数据分布情况满足这两种 Join 执行方式的要求，否则所建议的 Join 执行方式不生效。
 
 #### 语法
 
@@ -401,7 +401,7 @@ CREATE MATERIALIZED VIEW mv
 
 * Broadcast Join
   
-  如果表 A 是个大表，表 B 是个小表，则您可以设置 Join Hint 为 Broadcast Join。小表 B 的数据全量广播到表 A 数据所在的机器上，再进行 Join 操作。Broadcast Join 相比较于 Shuffle Join，节省了 Shuffle 表 A 数据的开销 。
+  如果表 A 是个大表，表 B 是个小表，则您可以设置 Join Hint 为 Broadcast Join。表 B 的数据全量广播到表 A 数据所在的机器上，再进行 Join 操作。Broadcast Join 相比较于 Shuffle Join，节省了 Shuffle 表 A 数据的开销。
 
   ```SQL
   select k1 from t1 join [BROADCAST] t2 on t1.k1 = t2.k2 group by t2.k2;
