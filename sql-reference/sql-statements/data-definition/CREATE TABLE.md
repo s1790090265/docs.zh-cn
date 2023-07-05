@@ -437,7 +437,7 @@ PARTITION BY RANGE (pay_dt) (
 
   **使用限制**
 
-  * 不支持主键模型的表、更新模型的表和聚合表。
+  * 不支持主键模型表、更新模型表和聚合表。
   * 不支持归属 [Colocation Group](../../../using_starrocks/Colocate_join.md)。
   * 不支持 [Spark Load](../../../loading/SparkLoad.md)。
 
