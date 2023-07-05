@@ -1,6 +1,6 @@
 # 生成列
 
-StarRocks 自 3.1 版本起支持生成列（Generated Column）。该特性支持预先计算并存储表达式的结果，从而加速包含复杂表达式的查询，并且支持**[查询改写](#查询改写)**，因此极大提高了查询性能。
+StarRocks 自 3.1 版本起支持生成列（Generated Column）。该特性支持预先计算并存储表达式的结果，从而加速包含复杂表达式的查询，并且支持[查询改写](#查询改写)，因此极大提高了查询性能。
 
 您可以定义一个或者多个生成列来存储表达式的结果。当执行包含相同表达式的查询时，优化器会进行查询改写，用生成列替换表达式。或者您也可以直接查询生成列的数据。
 
@@ -127,7 +127,7 @@ DISTRIBUTED BY HASH(id);
 
     返回结果显示，StarRocks 计算表达式自动得出生成列 `newcol1` 和 `newcol2` 的值。
 
-    **注意事项：**<>br导入数据时如果您指定生成列的值，则会返回如下报错：
+    **注意事项：**<br>导入数据时如果您指定生成列的值，则会返回如下报错：
 
       ```SQL
       MySQL [example_db]> INSERT INTO test_tbl1 (id, data_array, data_json, newcol1, newcol2) 
@@ -176,7 +176,7 @@ DISTRIBUTED BY HASH(id);
       1 row in set (0.01 sec)
       ```
 
-2. 修改生成列 newcol1 和 newcol2：
+2. 修改生成列 `newcol1` 和 `newcol2`：
    - 修改生成列 `newcol1` 的数据类型为 `ARRAY<INT>`，表达式改为 `data_array`。
 
         ```SQL
@@ -193,37 +193,37 @@ DISTRIBUTED BY HASH(id);
 
 3. 查看修改后表结构和表中的数据。
 
-- 查看修改后的表结构
+    - 查看修改后的表结构
 
-    ```SQL
-    MySQL [example_db]>   SHOW CREATE TABLE test_tbl3\G
-    **** 1. row ****
-           Table: test_tbl3
-    Create Table: CREATE TABLE test_tbl3 (
-      id int(11) NOT NULL COMMENT "",
-      data_array array<int(11)> NOT NULL COMMENT "",
-      data_json json NOT NULL COMMENT "",
-      -- 修改后生成列的数据类型和表达式如下
-      newcol1 array<int(11)> NULL AS example_db.test_tbl3.data_array COMMENT "",
-      newcol2 varchar(65533) NULL AS json_string(json_query(example_db.test_tbl3.data_json, '$.b')) COMMENT ""
-    ) ENGINE=OLAP 
-    PRIMARY KEY(id)
-    DISTRIBUTED BY HASH(id)
-    PROPERTIES (...);
-    1 row in set (0.00 sec)
-    ```
+        ```SQL
+        MySQL [example_db]>   SHOW CREATE TABLE test_tbl3\G
+        **** 1. row ****
+            Table: test_tbl3
+        Create Table: CREATE TABLE test_tbl3 (
+        id int(11) NOT NULL COMMENT "",
+        data_array array<int(11)> NOT NULL COMMENT "",
+        data_json json NOT NULL COMMENT "",
+        -- 修改后生成列的数据类型和表达式如下
+        newcol1 array<int(11)> NULL AS example_db.test_tbl3.data_array COMMENT "",
+        newcol2 varchar(65533) NULL AS json_string(json_query(example_db.test_tbl3.data_json, '$.b')) COMMENT ""
+        ) ENGINE=OLAP 
+        PRIMARY KEY(id)
+        DISTRIBUTED BY HASH(id)
+        PROPERTIES (...);
+        1 row in set (0.00 sec)
+        ```
 
-- 查看修改后的表数据，返回结果显示，生成列 `newcol1` 和 `newcol2` StarRocks 根据修改后的表达式重新计算出生成列 `newcol1` 和 `newcol2` 的值。
+    - 查看修改后的表数据，返回结果显示，生成列 `newcol1` 和 `newcol2` StarRocks 根据修改后的表达式重新计算出生成列 `newcol1` 和 `newcol2` 的值。
 
-    ```SQL
-    MySQL [example_db]> select * from test_tbl3;
-    +------+------------+------------------+---------+---------+
-    | id   | data_array | data_json        | newcol1 | newcol2 |
-    +------+------------+------------------+---------+---------+
-    |    1 | [1,2]      | {"a": 1, "b": 2} | [1,2]   | 2       |
-    +------+------------+------------------+---------+---------+
-    1 row in set (0.01 sec)
-    ```
+        ```SQL
+        MySQL [example_db]> select * from test_tbl3;
+        +------+------------+------------------+---------+---------+
+        | id   | data_array | data_json        | newcol1 | newcol2 |
+        +------+------------+------------------+---------+---------+
+        |    1 | [1,2]      | {"a": 1, "b": 2} | [1,2]   | 2       |
+        +------+------------+------------------+---------+---------+
+        1 row in set (0.01 sec)
+        ```
 
 ### 查询改写
 
@@ -302,7 +302,7 @@ DISTRIBUTED BY HASH(id);
       1 row in set (0.01 sec)
       ```
 
-2. 准备 CSV 文件 `my_data1.csv`，用于更新表 `test_tbl5`的部分列。 
+2. 准备 CSV 文件 `my_data1.csv`，用于更新表 `test_tbl5`的部分列。
 
       ```csv
       1|[3,4]|{"a": 3, "b": 4}
