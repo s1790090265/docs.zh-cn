@@ -350,7 +350,7 @@ PARTITION BY RANGE(event_day)
 DISTRIBUTED BY HASH(site_id);
 ```
 
-如下查询中，假设每个分区有 10 个分桶，则其中 9 个分桶被裁减，因而系统只需要扫描 site_access 表中 1/10 的数据：
+如下查询中，假设每个分区有 10 个分桶，则其中 9 个分桶被裁减，因而系统只需要扫描 `site_access` 表中 1/10 的数据：
 
 ```SQL
 select sum(pv)
@@ -388,7 +388,7 @@ DISTRIBUTED BY HASH(site_id,city_code);
 
 **使用限制**
 
-- 不支持主键模型的表、更新模型的表和聚合表。
+- 不支持主键模型表、更新模型表和聚合表。
 - 不支持归属 [Colocation Group](../using_starrocks/Colocate_join.md)。
 - 不支持 [Spark Load](../loading/SparkLoad.md)。
 
