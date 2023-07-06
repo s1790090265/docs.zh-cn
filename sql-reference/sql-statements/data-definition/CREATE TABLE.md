@@ -14,7 +14,7 @@ CREATE [EXTERNAL] TABLE [IF NOT EXISTS] [database.]table_name
 [key_desc]
 [COMMENT "table comment"]
 [partition_desc]
-distribution_desc
+[distribution_desc]
 [rollup_index]
 [ORDER BY (column_definition1,...)]
 [PROPERTIES ("key"="value", ...)]
@@ -399,7 +399,25 @@ PARTITION BY RANGE (pay_dt) (
 
 ### **distribution_desc**
 
-支持哈希分桶和随机分桶。
+支持随机分桶（Random bucketing）和哈希分桶（Hash bucketing）。如果不指定分桶信息，则 StarRocks 默认使用随机分桶且自动设置分桶数量。
+
+* 随机分桶（自 v3.1）
+
+  对每个分区的数据，StarRocks 将数据随机地分布在所有分桶中，而不受到特定列值的影响。并且如果选择由系统设置分桶数量，则您无需设置分桶信息。如果选择手动指定分桶数量，则语法如下：
+
+  ```SQL
+  DISTRIBUTED BY RANDOM BUCKETS <num>
+  ```
+
+  不过值得注意的是，如果查询海量数据且查询时经常使用一些列会作为条件列，随机分桶提供的查询性能可能不够理想。在该场景下建议您使用哈希分桶，当查询时经常使用这些列作为条件列时，只需要扫描和计算查询命中的少量分桶，则可以显著提高查询性能。
+
+  **使用限制**
+
+  * 不支持主键模型表、更新模型表和聚合表。
+  * 不支持指定 [Colocation Group](../../../using_starrocks/Colocate_join.md)。
+  * 不支持 [Spark Load](../../../loading/SparkLoad.md)。
+
+  更多随机分桶的信息，请参见[随机分桶](../../../table_design/Data_distribution.md#随机分桶自-v31)。
 
 * 哈希分桶
 
@@ -424,24 +442,6 @@ PARTITION BY RANGE (pay_dt) (
   * 作为分桶键的列，该列的值不支持更新。
   * 分桶键指定后不支持修改。
   * 自 2.5.7 版本起，建表时**无需手动指定分桶数量**，StarRocks 自动设置分桶数量。如果您需要手动设置分桶数量，请参见[确定分桶数量](../../../table_design/Data_distribution.md#确定分桶数量)。
-
-* 随机分桶（自 3.1）
-
-  对每个分区的数据，StarRocks 将数据随机地分布在所有分桶中，而不受到特定列值的影响。并且如果选择由系统设置分桶数量，则您无需设置分桶信息。如果选择手动指定分桶数量，则语法如下：
-
-  ```SQL
-  DISTRIBUTED BY RANDOM BUCKETS <num>
-  ```
-  
-  不过值得注意的是，随机分桶可能不适用于基于特定列值进行查询和聚合操作的情况。在这些情况下，哈希分桶可能更为合适，因为它可以将相似的数据存储在同一个桶中，方便数据的访问和处理。
-
-  **使用限制**
-
-  * 不支持主键模型表、更新模型表和聚合表。
-  * 不支持归属 [Colocation Group](../../../using_starrocks/Colocate_join.md)。
-  * 不支持 [Spark Load](../../../loading/SparkLoad.md)。
-
-  更多随机分桶的信息，请参见[随机分桶](../../../table_design/Data_distribution.md#随机分桶自-31)。
 
 ### **ORDER BY**
 
