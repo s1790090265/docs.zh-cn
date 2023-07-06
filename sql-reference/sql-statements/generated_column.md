@@ -74,7 +74,7 @@ DISTRIBUTED BY HASH(id);
       1 row in set (0.04 sec)
       ```
 
-2. 执行 ALTER TABLE  ... ADD COLUMN ... 增加生成列 `newcol1` 和 `newcol2`，分别是引用普通列 `data_array` 和 `data_json` 计算表达式后生成的列。
+2. 执行 ALTER TABLE ... ADD COLUMN ... 增加生成列 `newcol1` 和 `newcol2`，分别是引用普通列 `data_array` 和 `data_json` 计算表达式后生成的列。
 
       ```SQL
       ALTER TABLE test_tbl2
@@ -106,7 +106,7 @@ DISTRIBUTED BY HASH(id);
 
 导入数据时 StarRocks 通过计算表达式自动得出生成列的值，**您无法指定生成列的值**。本文以使用 [INSERT INTO](../loading/InsertInto.md) 导入数据为例进行说明。
 
-1. 使用 INSERT INTO 插入一行数据至表 `test_tbl1`，注意不能在 `VALUES ()`  中指定生成列的值 。
+1. 使用 INSERT INTO 插入一行数据至表 `test_tbl1`，注意不能在 `VALUES ()` 中指定生成列的值 。
 
       ```SQL
       INSERT INTO test_tbl1 (id, data_array, data_json)
@@ -213,7 +213,7 @@ DISTRIBUTED BY HASH(id);
         1 row in set (0.00 sec)
         ```
 
-    - 查看修改后的表数据，返回结果显示，生成列 `newcol1` 和 `newcol2` StarRocks 根据修改后的表达式重新计算出生成列 `newcol1` 和 `newcol2` 的值。
+    - 查看修改后的表数据，返回结果显示，StarRocks 根据修改后的表达式重新计算出生成列 `newcol1` 和 `newcol2` 的值。
 
         ```SQL
         MySQL [example_db]> select * from test_tbl3;
@@ -238,7 +238,7 @@ DISTRIBUTED BY HASH(id);
           data_array ARRAY<int> NOT NULL,
           data_json JSON NOT NULL,
           newcol1 DOUBLE AS array_avg(data_array),
-          newcol2 String  AS json_string(json_query(data_json, "$.a"))
+          newcol2 String AS json_string(json_query(data_json, "$.a"))
       )
       Primary KEY (id) DISTRIBUTED BY HASH(id);
       ```
@@ -251,7 +251,7 @@ DISTRIBUTED BY HASH(id);
       | Explain String                        |
       +---------------------------------------+
       | PLAN FRAGMENT 0                       |
-      |  OUTPUT EXPRS:4: newcol1 | 5: newcol2 | --  查询改写后命中生成列 newcol1 和 newcol2
+      |  OUTPUT EXPRS:4: newcol1 | 5: newcol2 | -- 查询改写后命中生成列 newcol1 和 newcol2
       |   PARTITION: RANDOM                   |
       |                                       |
       |   RESULT SINK                         |
