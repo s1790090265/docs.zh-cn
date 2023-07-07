@@ -228,7 +228,7 @@ DISTRIBUTED BY HASH(id);
 
 ### 删除生成列
 
-删除生成列 `newcol2`。
+删除表 `test_tbl3` 中的生成列 `newcol2`。
 
 ```SQL
 ALTER TABLE test_tbl3 DROP COLUMN newcol2;
