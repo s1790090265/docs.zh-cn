@@ -319,6 +319,7 @@
         + [STRUCT](/sql-reference/sql-statements/data-types/STRUCT.md)
     + [关键字](/sql-reference/sql-statements/keywords.md)
     + [AUTO_INCREMENT](/sql-reference/sql-statements/auto_increment.md)
+    + [生成列](/sql-reference/sql-statements/generated_columns.md)
   + 函数参考
     + [Java UDF](/sql-reference/sql-functions/JAVA_UDF.md)
     + [窗口函数](/sql-reference/sql-functions/Window_function.md)
@@ -556,6 +557,8 @@
     + Struct 函数
       + [named_struct](/sql-reference/sql-functions/struct-functions/named_struct.md)
       + [row](/sql-reference/sql-functions/struct-functions/row.md)
+    + 表函数
+      + [generate_series](/sql-reference/sql-functions/table-functions/generate_series.md)
     + Bit 函数
       + [bitand](/sql-reference/sql-functions/bit-functions/bitand.md)
       + [bitnot](/sql-reference/sql-functions/bit-functions/bitnot.md)

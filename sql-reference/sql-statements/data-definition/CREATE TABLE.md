@@ -30,7 +30,7 @@ distribution_desc
 语法：
 
 ```sql
-col_name col_type [agg_type] [NULL | NOT NULL] [DEFAULT "default_value"] [AUTO_INCREMENT]
+col_name col_type [agg_type] [NULL | NOT NULL] [DEFAULT "default_value"] [AUTO_INCREMENT] [AS generation_expr]
 ```
 
 说明：
@@ -123,7 +123,9 @@ col_name col_type [agg_type] [NULL | NOT NULL] [DEFAULT "default_value"] [AUTO_I
 * **DEFAULT <默认值>**：默认值为指定类型的值。例如，列类型为 VARCHAR，即可指定默认值为 `DEFAULT "beijing"`。当前不支持指定 ARRAY、BITMAP、JSON、HLL 和 BOOLEAN 类型为默认值。
 * **DEFAULT (<表达式>)**：默认值为指定函数返回的结果。目前仅支持 [uuid()](../../sql-functions/utility-functions/uuid.md) 和 [uuid_numeric()](../../sql-functions/utility-functions/uuid_numeric.md) 表达式。
 
-* **AUTO_INCREMENT**：指定自增列。自增列的数据类型只支持 BIGINT，自增 ID 从 1 开始增加，自增步长为 1。有关自增列的详细说明，请参见 [AUTO_INCREMENT](../auto_increment.md)。
+**AUTO_INCREMENT**：指定自增列。自增列的数据类型只支持 BIGINT，自增 ID 从 1 开始增加，自增步长为 1。有关自增列的详细说明，请参见 [AUTO_INCREMENT](../auto_increment.md)。自 v3.0，StarRocks 支持该功能。
+
+**AS generation_expr**：指定生成列和其使用的表达式。[生成列](../generated_columns.md)用于预先计算并存储表达式的结果，可以加速包含复杂表达式的查询。自 v3.1，StarRocks 支持该功能。
 
 ### **index_definition**
 
@@ -603,6 +605,38 @@ PROPERTIES (
 > * `foreign_key_constraints` 中的 `child_column` 必须对应另一个表的 `unique_constraints` 中的 `unique_key`。
 > * `child_column` 和 `parent_column` 的数量必须一致。
 > * `child_column` 和对应的 `parent_column` 的数据类型必须匹配。
+
+#### 为 StarRocks 存算分离集群创建云原生表
+
+为了[使用 StarRocks 存算分离集群](../../../deployment/deploy_shared_data.md#使用-starrocks-存算分离集群)，您需要通过以下 PROPERTIES 创建云原生表：
+
+```SQL
+PROPERTIES (
+    "enable_storage_cache" = "{ true | false }",
+    "storage_cache_ttl" = "<integer_value>",
+    "enable_async_write_back" = "{ true | false }"
+)
+```
+
+* `enable_storage_cache`：是否启用本地磁盘缓存。默认值：`true`。
+
+  * 当该属性设置为 `true` 时，数据会同时导入对象存储（或 HDFS）和本地磁盘（作为查询加速的缓存）。
+  * 当该属性设置为 `false` 时，数据仅导入到对象存储中。
+
+  > **说明**
+  >
+  > 如需启用本地磁盘缓存，必须在 BE 配置项 `storage_root_path` 中指定磁盘目录。更多信息，请参见 [BE 配置项](../../../administration/Configuration.md#be-配置项)
+
+* `storage_cache_ttl`：启用本地磁盘缓存后，StarRocks 在本地磁盘中缓存热数据的存活时间。过期数据将从本地磁盘中删除。如果将该值设置为 `-1`，则缓存数据不会过期。默认值：`2592000`（30 天）。
+
+> **注意**
+>
+> 当禁用本地磁盘缓存时，您无需设置该配置项。如果您禁用了本地磁盘缓存，并且将此项设置为除 `0` 以外的值，StarRocks 将出现未知行为。
+
+* `enable_async_write_back`：是否允许数据异步写入对象存储。默认值：`false`。
+
+  * 当该属性设置为 `true` 时，导入任务在数据写入本地磁盘缓存后立即返回成功，数据将异步写入对象存储。允许数据异步写入可以提升导入性能，但如果系统发生故障，可能会存在一定的数据可靠性风险。
+  * 当该属性设置为 `false` 时，只有在数据同时写入对象存储和本地磁盘缓存后，导入任务才会返回成功。禁用数据异步写入保证了更高的可用性，但会导致较低的导入性能。
 
 ## 示例
 
