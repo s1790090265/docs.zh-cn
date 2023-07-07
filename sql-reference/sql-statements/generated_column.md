@@ -29,7 +29,7 @@ CREATE TABLE test_tbl1
     newcol1 DOUBLE AS array_avg(data_array),
     newcol2 String AS json_string(json_query(data_json, "$.a"))
 )
-Primary KEY (id)
+PRIMARY KEY (id)
 DISTRIBUTED BY HASH(id);
 ```
 
@@ -37,7 +37,7 @@ DISTRIBUTED BY HASH(id);
 
 - 生成列必须在普通列之后。
 - 生成列的表达式不支持使用聚合函数。
-- 生成列的表达式中不能引用其他生成列或自增列，可以引用多个普通列。
+- 生成列的表达式中不能引用其他生成列或[自增列](./auto_increment.md)，可以引用多个普通列。
 - 生成列的数据类型必须与表达式返回结果的数据类型相匹配。
 - 不支持在聚合表创建生成列。
 - StarRocks 存算分离模式暂时不支持该功能。
@@ -58,7 +58,7 @@ DISTRIBUTED BY HASH(id);
           data_array ARRAY<int> NOT NULL,
           data_json JSON NOT NULL
        )
-      Primary KEY (id)
+      PRIMARY KEY (id)
       DISTRIBUTED BY HASH(id);
       
       -- 插入一行数据
@@ -159,7 +159,7 @@ DISTRIBUTED BY HASH(id);
           newcol1 DOUBLE AS array_avg(data_array),
           newcol2 String AS json_string(json_query(data_json, "$.a"))
       )
-      Primary KEY (id)
+      PRIMARY KEY (id)
       DISTRIBUTED BY HASH(id);
       
       -- 插入一行数据
@@ -240,7 +240,7 @@ DISTRIBUTED BY HASH(id);
           newcol1 DOUBLE AS array_avg(data_array),
           newcol2 String AS json_string(json_query(data_json, "$.a"))
       )
-      Primary KEY (id) DISTRIBUTED BY HASH(id);
+      PRIMARY KEY (id) DISTRIBUTED BY HASH(id);
       ```
 
 2. 如果通过 `SELECT array_avg(data_array), json_string(json_query(data_json, "$.a")) FROM test_tbl4;` 查询 `test_tbl4` 的数据，由于查询语句只涉及正常列 `data_array` 和 `data_json` ，但是查询中的表达式与生成列 `newcol1` 和 `newcol2` 的表达式相匹配，则执行计划显示优化器会自动进行查询改写，直接读取生成列  `newcol1` 和 `newcol2`  的值。
@@ -285,7 +285,7 @@ DISTRIBUTED BY HASH(id);
           newcol1 DOUBLE AS array_avg(data_array),
           newcol2 String AS json_string(json_query(data_json, "$.a"))
       )
-      Primary KEY (id)
+      PRIMARY KEY (id)
       DISTRIBUTED BY HASH(id);
       
       -- 插入一行数据

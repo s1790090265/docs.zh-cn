@@ -314,6 +314,17 @@ ORDER BY (column_name1, column_name2, ...)
 1. index 中的所有列都要写出来。
 2. value 列在 key 列之后。
 
+#### 增加生成列
+
+语法：
+
+```sql
+ALTER TABLE [database.]table
+ADD col_name data_type [NULL] AS generation_expr [COMMENT 'string']
+```
+
+建表后您可以指生成列和其使用的表达式](../generated_column.md)。用于预先计算并存储表达式的结果至生成列，可以加速包含复杂表达式的查询。
+
 #### 修改 table 的属性
 
 目前支持修改 `bloom_filter_columns`，`colocate_with`， `dynamic_partition` 属性，`enable_persistent_index` 属性，`replication_num` 和 `default.replication_num` 属性。
