@@ -11,7 +11,7 @@
 
 ### 常见的数据分布方式
 
-现代分布式数据库中，常见的数据分布方式有如下几种：Round-Robin、Range、List、Hash 和 Random。如下图所示：
+现代分布式数据库中，常见的数据分布方式有如下几种：Round-Robin、Range、List 和 Hash。如下图所示：
 
 ![数据分布方式](../assets/3.3.2-1.png)
 
@@ -22,8 +22,6 @@
 - List：直接基于离散的各个取值做数据分布，性别、省份等数据就满足这种离散的特性。每个离散值会映射到一个节点上，多个不同的取值可能也会映射到相同节点上。
 
 - Hash：通过哈希函数把数据映射到不同节点上。
-
-- Random：将数据随机地分布到多个节点。
 
 为了更灵活地划分数据，除了单独采用上述数据分布方式之一以外，您还可以根据具体的业务场景需求组合使用这些数据分布方式。常见的组合方式有 Hash+Hash、Range+Hash、Hash+List。
 
@@ -80,13 +78,11 @@ CREATE TABLE site_access(
     pv BIGINT SUM DEFAULT '0'
 )
 AGGREGATE KEY(event_day, site_id, city_code, user_name)
-PARTITION BY RANGE(event_day) -- 设置分区方式为 Range 分区
-(
+PARTITION BY RANGE(event_day)( -- 设置分区方式为 Range 分区
     PARTITION p1 VALUES LESS THAN ("2020-01-31"),
     PARTITION p2 VALUES LESS THAN ("2020-02-29"),
     PARTITION p3 VALUES LESS THAN ("2020-03-31")
-)
-; -- 没有设置分桶方式，默认由 StarRocks 使用 Random 分桶
+); -- 没有设置分桶方式，默认由 StarRocks 使用 Random 分桶
 ```
 
 建表时设置数据分布方式为 Range + Hash 分布：
@@ -100,8 +96,7 @@ CREATE TABLE site_access(
     pv BIGINT SUM DEFAULT '0'
 )
 AGGREGATE KEY(event_day, site_id, city_code, user_name)
-PARTITION BY RANGE(event_day) -- 设置分区方式为 Range 分区
-(
+PARTITION BY RANGE(event_day)( -- 设置分区方式为 Range 分区
     PARTITION p1 VALUES LESS THAN ("2020-01-31"),
     PARTITION p2 VALUES LESS THAN ("2020-02-29"),
     PARTITION p3 VALUES LESS THAN ("2020-03-31")
@@ -129,12 +124,14 @@ DISTRIBUTED BY HASH(site_id); -- 设置分桶方式为 Hash 分桶，必须指�
 
 #### 分桶
 
+一个分区按分桶方式被分成了多个桶 bucket，每个桶的数据称之为一个 tablet。
+
 分桶方式：StarRocks 支持[随机分桶](#随机分桶自-v31)（自 3.1 版本起） 和 [哈希分桶](#哈希分桶)。
 
 - 随机分桶，建表和新增分区时无需设置分桶键。在同一分区内，数据随机分布到不同的分桶中。
 - 哈希分桶，建表和新增分区时需要指定分桶键。在同一分区内，数据按照分桶键划分分桶后，所有分桶键的值相同的行会唯一分配到对应的一个分桶。
 
-分桶数量：自 2.5.7 版本起，建表和新增分区时可以不设置分桶数量（推荐），由 StarRocks 自动设置分桶数量。更多信息，请参见[确定分桶数量](#确定分桶数量)。
+分桶数量：推荐 由StarRocks 自动设置分桶数量（自 v2.5.7 版本起）。如果分桶数量。更多信息，请参见[确定分桶数量](#确定分桶数量)。
 
 ## 创建和管理分区
 
@@ -162,8 +159,7 @@ CREATE TABLE site_access(
     pv BIGINT SUM DEFAULT '0'
 )
 AGGREGATE KEY(event_day, site_id, city_code, user_name)
-PARTITION BY RANGE(event_day)
-(
+PARTITION BY RANGE(event_day)(
     PARTITION p1 VALUES LESS THAN ("2020-01-31"),
     PARTITION p2 VALUES LESS THAN ("2020-02-29"),
     PARTITION p3 VALUES LESS THAN ("2020-03-31")
@@ -351,7 +347,7 @@ SHOW PARTITIONS FROM site_access;
 
 **使用限制**
 
-- 不支持主键模型表、更新模型表和聚合表。
+- 仅支持明细模型表。
 - 不支持指定 [Colocation Group](../using_starrocks/Colocate_join.md)。
 - 不支持 [Spark Load](../loading/SparkLoad.md)。
 
@@ -403,7 +399,6 @@ DISTRIBUTED BY RANDOM BUCKETS 8; --手动设置分桶数量为 8
 **注意事项**
 
 - **建表时，如果使用哈希分桶，则必须指定分桶键**。
-- 作为分桶键的列，该列的值不能够更新。
 - 分桶键指定后不支持修改。
 
 如下示例中，`site_access` 表采用 `site_id` 作为分桶键，其原因在于 `site_id` 为高基数列。此外，针对 `site_access` 表的查询请求，基本上都以站点作为查询过滤条件，采用 `site_id` 作为分桶键，还可以在查询时裁剪掉大量无关分桶。
@@ -417,8 +412,7 @@ CREATE TABLE site_access(
     pv BIGINT SUM DEFAULT '0'
 )
 AGGREGATE KEY(event_day, site_id, city_code, user_name)
-PARTITION BY RANGE(event_day)
-(
+PARTITION BY RANGE(event_day)(
     PARTITION p1 VALUES LESS THAN ("2020-01-31"),
     PARTITION p2 VALUES LESS THAN ("2020-02-29"),
     PARTITION p3 VALUES LESS THAN ("2020-03-31")
