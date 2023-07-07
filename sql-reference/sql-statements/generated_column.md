@@ -13,7 +13,7 @@ StarRocks 自 3.1 版本起支持生成列（Generated Column）。该特性支�
 #### 语法
 
 ```SQL
-<col_name> <data_type> [NULL] AS <expr> [COMMENT 'string']
+col_name data_type [NULL] AS generation_expr [COMMENT 'string']
 ```
 
 #### 建表时创建生成列（推荐）
