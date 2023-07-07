@@ -323,7 +323,7 @@ ALTER TABLE [database.]table
 ADD col_name data_type [NULL] AS generation_expr [COMMENT 'string']
 ```
 
-新增生成列并且指定其使用的表达式。[生成列](../generated_columns.md)用于预先计算并存储表达式的结果，可以加速包含复杂表达式的查询。自 v3.1，StarRocks 支持该功能。
+增加生成列并且指定其使用的表达式。[生成列](../generated_columns.md)用于预先计算并存储表达式的结果，可以加速包含复杂表达式的查询。自 v3.1，StarRocks 支持该功能。
 
 #### 修改 table 的属性
 
