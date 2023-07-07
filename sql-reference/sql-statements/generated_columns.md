@@ -48,7 +48,6 @@ DISTRIBUTED BY HASH(id);
 >
 > 该操作比较耗时且开销较大。因此建议在建表时新增生成列，如果必须使用 ALTER TABLE 增加生成列，请提前评估开销和时间成本。
 
-
 1. 创建表 `test_tbl2`，包含三个普通列 `id`、`data_array` 和 `data_json`。建表成功后插入一行数据。
 
       ```SQL
@@ -159,7 +158,7 @@ DISTRIBUTED BY HASH(id);
           data_json JSON NOT NULL,
           -- 指定生成列的数据类型和表达式如下
           newcol1 DOUBLE AS array_avg(data_array),
-          newcol2 String AS json_string(json_query(data_json, "$.a"))
+          newcol2  String AS json_string(json_query(data_json, "$.a"))
       )
       PRIMARY KEY (id)
       DISTRIBUTED BY HASH(id);
@@ -227,6 +226,16 @@ DISTRIBUTED BY HASH(id);
         1 row in set (0.01 sec)
         ```
 
+### 删除生成列
+
+删除生成列 `newcol2`。
+
+```SQL
+ALTER TABLE test_tbl3 DROP COLUMN newcol2;
+```
+
+**注意事项：**<br>如果生成列的表达式引用某个普通列，并且您需要删除或修改该普通列，您必须先删除该生成列，才能删除或修改该普通列。
+
 ### 查询改写
 
 如果查询中的表达式与某个生成列的表达式匹配，则优化器会自动进行查询改写，直接读取生成列的值。
@@ -245,7 +254,7 @@ DISTRIBUTED BY HASH(id);
       PRIMARY KEY (id) DISTRIBUTED BY HASH(id);
       ```
 
-2. 如果通过 `SELECT array_avg(data_array), json_string(json_query(data_json, "$.a")) FROM test_tbl4;` 查询 `test_tbl4` 的数据，由于查询语句只涉及正常列 `data_array` 和 `data_json` ，但是查询中的表达式与生成列 `newcol1` 和 `newcol2` 的表达式相匹配，则执行计划显示优化器会自动进行查询改写，直接读取生成列  `newcol1` 和 `newcol2`  的值。
+2. 如果通过 `SELECT array_avg(data_array), json_string(json_query(data_json, "$.a")) FROM test_tbl4;` 查询 `test_tbl4` 的数据，由于查询语句只涉及正常列 `data_array` 和 `data_json` ，但是查询中的表达式与生成列 `newcol1` 和 `newcol2` 的表达式相匹配，则执行计划显示优化器会自动进行查询改写，直接读取生成列  `newcol1` 和 `newcol2` 的值。
 
       ```SQL
       MySQL [example_db]> EXPLAIN SELECT array_avg(data_array), json_string(json_query(data_json, "$.a")) FROM test_tbl4;
@@ -361,7 +370,3 @@ DISTRIBUTED BY HASH(id);
           ...
       }
       ```
-
-## 使用限制
-
-如果某个普通列被某生成列的表达式引用，则您不能直接删除或修改该普通列，您必须先删除该生成列，才能删除或修改该普通列。
