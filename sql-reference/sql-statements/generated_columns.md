@@ -228,10 +228,10 @@ DISTRIBUTED BY HASH(id);
 
 ### 删除生成列
 
-删除表 `test_tbl3` 中的生成列 `newcol2`。
+删除表 `test_tbl3` 中的生成列 `newcol1`。
 
 ```SQL
-ALTER TABLE test_tbl3 DROP COLUMN newcol2;
+ALTER TABLE test_tbl3 DROP COLUMN newcol1;
 ```
 
 **注意事项：**<br>如果生成列的表达式引用某个普通列，并且您需要删除或修改该普通列，您必须先删除该生成列，才能删除或修改该普通列。
